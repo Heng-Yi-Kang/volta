@@ -7,10 +7,10 @@ from controllers.result_controller import result_router
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.middleware.cors import CORSMiddleware
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="my-secret-key")
+app.add_middleware(SessionMiddleware, secret_key="my-secret-key", same_site="none", https_only=False)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

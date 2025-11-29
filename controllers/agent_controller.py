@@ -1,3 +1,4 @@
+import json
 import os
 from fastapi import APIRouter, Request
 from fastapi.responses import RedirectResponse
@@ -15,6 +16,8 @@ async def vector_store(file_path: str):
 
 @agent_router.get("/process")
 async def process_agent(request: Request, vector_store_done: bool = False):
+    print("[DEBUG] /agent/process headers:", request.headers)
+    print("[DEBUG] /agent/process session before set:", dict(request.session))
     # If vector store not done, redirect to vector_store
     # if not vector_store_done:
     #     # You can change the file_path as needed
@@ -34,9 +37,11 @@ async def process_agent(request: Request, vector_store_done: bool = False):
     # google search on the problems
     # return solutions in json format
     suggestions = problem_analysis_suggestion(user_problem)
-    print(suggestions)
     request.session['analysis_suggestions'] = suggestions
+    print("[DEBUG] /agent/process session after set:", dict(request.session))
     print("*" *100)
     print("suggestions stored: ")
-    print("suggestions stored")
-    return {"message":"result evaluated"}
+    print(request.session.get('analysis_suggestions'))
+    formatted_analysis_suggestions = suggestions.replace("```json", "").replace("```", "")
+    json_data = json.loads(formatted_analysis_suggestions)
+    return json_data

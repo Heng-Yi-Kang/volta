@@ -9,6 +9,8 @@ user_router = APIRouter(prefix="/users")
 async def get_user_background_info(request: Request, role: str, report: str):
     data = {"role": role, "report": report}
     request.session["user_info"] = data
+    print("*" * 100)
+    print(f"User information stored in session: {request.session["user_info"]}")
     return {"message": "User information received successfully."}
 
 

@@ -104,21 +104,29 @@ def problem_analysis_suggestion(problem: str):
         contents=f"""
         Provide suggestions to solve the following energy problem: {problem}.
         Your need to response in JSON format with the following structure:
-        {{"problems" : "problems",
-    "title": "HVAC optimization sprint",
-    "tasks": [
-        {{
-            "id": "t1",
-            "text": "check air filters",
-            "points": 15,
-            "completed": "false"
-        }}
-    ]
-}}
+        {
+        {
+              "problem": "problem",
+            "campaigns": [
+    {
+      "title": "HVAC optimization sprint",
+      "tasks": [
+        {
+          "id": "t1",
+          "text": "check air filters",
+          "points": 15,
+          "completed": "false"
+        }
+      ]
+    }
+  ]
+        }
+        }
+        
 the title should be a campaign name related to energy saving.
 the text should be the task assigned to the user related to the campaign. 
 The points is the reward points that is given to the user upon the completion of the task. 
-You must at least provide 5 campaigns. 
+You must at least provide 5 campaigns. The total points should be 100.
 """
     )
     return response.text
