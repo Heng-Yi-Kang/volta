@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 
 // Define the API endpoint where the files should be sent
-const UPLOAD_URL = 'YOUR_API_ENDPOINT_HERE'; 
+const UPLOAD_URL = 'http://localhost:8000/pdf/upload';
 
 const FileUpload = () => {
   const [files, setFiles] = useState([]); // Changed to an array
@@ -88,9 +88,8 @@ const FileUpload = () => {
     const formData = new FormData();
     
     // Append every selected file to the FormData object
-    files.forEach((file, index) => {
-      // Use a consistent key, e.g., 'documents[]', or just 'file' if the backend handles arrays
-      formData.append(`files[${index}]`, file); 
+    files.forEach((file) => {
+      formData.append('pdf_files', file); // Use the key expected by FastAPI
     });
 
     try {
@@ -102,7 +101,7 @@ const FileUpload = () => {
 
       console.log('Upload successful:', response.data);
       setUploadStatus('success');
-      // setFiles([]); // Clear files after successful upload
+      setFiles([]); // Clear files after successful upload
 
     } catch (error) {
       console.error('Upload failed:', error.response ? error.response.data : error.message);

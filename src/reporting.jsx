@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const ReportingTab = () => {
+const ReportingTab = ({ onResultUpdate }) => {
   const [formData, setFormData] = useState({
     role: "",
     report: "",
   });
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -22,28 +21,33 @@ const ReportingTab = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true
         }
       );
 
       if (response.status >= 200 && response.status < 300) {
         console.log("backend response: ", response.data);
 
-        axios.get("http://127.0.0.1:8000/agent/process");
-        axios
-          .get("http://127.0.0.1:8000/result/get-result")
-
-          .then((response) => {
-            console.log("Data fetched successfully:");
-            console.log("HTTP Status:", response.status);
-            console.log("Data:", response.data);
-          })
-
-          .catch((error) => {
-            console.error("❌ Error fetching data:", error.message);
-            if (error.response) {
-              console.error("Response Status:", error.response.status);
-            }
-          });
+        const result = await axios.get("http://127.0.0.1:8000/agent/process", { withCredentials: true });
+        sessionStorage.setItem("result", JSON.stringify(result.data));
+        if (onResultUpdate) {
+          onResultUpdate(result.data); // Send result data to App.jsx
+        }
+        // axios
+        //   .get("http://127.0.0.1:8000/result/get-result", { withCredentials: true })
+        //
+        //   .then((response) => {
+        //     console.log("Data fetched successfully:");
+        //     console.log("HTTP Status:", response.status);
+        //     console.log("Data:", response.data);
+        //   })
+        //
+        //   .catch((error) => {
+        //     console.error("❌ Error fetching data:", error.message);
+        //     if (error.response) {
+        //       console.error("Response Status:", error.response.status);
+        //     }
+        //   });
       } else {
         throw new Error(`Request failed with status ${response.status}`);
       }

@@ -50,10 +50,26 @@ const initialCampaigns = [
   },
 ];
 
+
 const App = () => {
-  const [activeTab, setActiveTab] = useState("reporting");
   const [campaigns, setCampaigns] = useState(initialCampaigns);
-  const [totalPoints, setTotalPoints] = useState(0);
+  const [totalPoints, setTotalPoints] = useState(0); // Start score at 0
+
+  // Function to update campaigns from ReportingTab
+  const handleResultUpdate = (resultData) => {
+    // Always set campaigns as an array
+    if (Array.isArray(resultData)) {
+      setCampaigns(resultData);
+    } else if (resultData && Array.isArray(resultData.campaigns)) {
+      setCampaigns(resultData.campaigns);
+    } else if (resultData && typeof resultData === 'object') {
+      setCampaigns([resultData]); // wrap single object in array
+    } else {
+      setCampaigns([]); // fallback to empty array
+    }
+    setTotalPoints(0); // Reset score to 0 on new campaign/task data
+    console.log(campaigns);
+  };
 
   // Campaign Handlers (unchanged)
   const handleTaskToggle = (campaignId, taskId, taskPoints) => {
@@ -121,7 +137,7 @@ const App = () => {
         
         {/* TOP RIGHT: Reporting */}
         <div className="bg-white border border-gray-200 rounded-xl shadow-lg">
-           <ReportingTab/>
+           <ReportingTab onResultUpdate={handleResultUpdate}/>
         </div>
 
         {/* BOTTOM RIGHT: Files */}
