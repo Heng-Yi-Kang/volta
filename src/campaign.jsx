@@ -30,7 +30,7 @@ const CustomCheckbox = ({ id, checked, onChange, label, points }) => (
 
 const CampaignsTab = ({ campaigns, totalPoints, onTaskToggle }) => {
   return (
-    <div className="p-4 sm:p-8 space-y-8">
+    <div className="p-4 sm:p-8 space-y-8 row-span-3">
       
       {/* Points Display - Green Theme */}
       <div className="flex justify-between items-center bg-green-50 p-4 sm:p-6 rounded-xl shadow-lg border border-green-100">

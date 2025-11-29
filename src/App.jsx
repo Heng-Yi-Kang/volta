@@ -3,7 +3,6 @@ import ReportingTab from "./reporting";
 import CampaignsTab from "./campaign";
 import FilesTab from "./files";
 
-
 // Sample initial data for campaigns (unchanged)
 const initialCampaigns = [
   {
@@ -81,16 +80,14 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-start justify-center p-4">
-      <div className="w-full max-w-4xl bg-white shadow-2xl rounded-xl overflow-hidden">
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-4xl bg-white shadow-2xl rounded-xl overflow-hidden col-span-2">
         <header
           className="p-5 shadow-xl flex flex-col items-center justify-center"
           style={{ backgroundColor: "#B7E5CD" }} // Light background color as requested
         >
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
-            <span
-              className="font-serif text-green-700 transition-transform duration-300 inline-block hover:scale-105"
-            >
+            <span className="font-serif text-green-700 transition-transform duration-300 inline-block hover:scale-105">
               Volta
             </span>
           </h1>
@@ -136,9 +133,9 @@ const App = () => {
           
         </div>
 
-        {/* Tab Content */}
-       
-          {activeTab === "campaigns" ? (
+        {/* /* Tab Content  */}
+
+        {activeTab === "campaigns" ? (
             <CampaignsTab
               campaigns={campaigns}
               totalPoints={totalPoints}
@@ -150,7 +147,7 @@ const App = () => {
             <FilesTab />
           )}</>
           }
-        
+       
       </div>
     </div>
   );
