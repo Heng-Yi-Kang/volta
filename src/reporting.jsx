@@ -1,6 +1,14 @@
 import React from 'react';
 
 const ReportingTab = () => {
+
+  const handleSubmit = () => {
+    alert('Report Submitted! The Volta engine will analyze this and may generate a new campaign task.')
+  }
+
+
+
+
   return (
     <div className="p-4 sm:p-8">
       <h3 className="text-2xl font-bold mb-6 text-gray-700">Submit an Observation</h3>
@@ -12,9 +20,9 @@ const ReportingTab = () => {
             defaultValue=""
           >
             <option value="" disabled>Select your role</option>
+            <option>Admin</option>
             <option>Facility Manager</option>
-            <option>Team Lead</option>
-            <option>Employee Volunteer</option>
+            
           </select>
         </div>
         <div>
@@ -26,9 +34,9 @@ const ReportingTab = () => {
         </div>
         <button 
           className="w-full py-3 bg-green-600 text-white font-bold rounded-lg shadow-md hover:bg-green-700 transition-colors text-lg"
-          onClick={() => alert('Report Submitted! The Volta engine will analyze this and may generate a new campaign task.')}
+          onClick={(handleSubmit)}
         >
-          Submit Report
+          Launch Campaign
         </button>
       </div>
     </div>
