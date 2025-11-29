@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/utils/upload_pdf.py">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/utils/upload_pdf.py" />
+              <option name="originalContent" value="import os&#10;import shutil&#10;&#10;async def upload_pdf(files):&#10;    os.makedirs(&quot;uploads&quot;, exist_ok=True)&#10;    for file in files:&#10;        file_location = f&quot;uploads/{file.filename}&quot;&#10;        # Read file content asynchronously&#10;        content = await file.read()&#10;        with open(file_location, &quot;wb&quot;) as file_object:&#10;            file_object.write(content)&#10;            print(f&quot;Saved file: {file_location}&quot;)&#10;    return {&quot;message&quot;: &quot;Files uploaded successfully&quot;}" />
+              <option name="updatedContent" value="import os&#10;import shutil&#10;&#10;async def upload_pdf(files):&#10;    os.makedirs(&quot;uploads&quot;, exist_ok=True)&#10;    for file in files:&#10;        file_location = f&quot;uploads/{file.filename}&quot;&#10;        # Read file content asynchronously&#10;        content = await file.read()&#10;        with open(file_location, &quot;wb&quot;) as file_object:&#10;            file_object.write(content)&#10;            print(f&quot;Saved file: {file_location}&quot;)&#10;    return {&quot;message&quot;: &quot;Files uploaded successfully&quot;}" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
