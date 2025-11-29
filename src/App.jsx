@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import ReportingTab from "./reporting";
 import CampaignsTab from "./campaign";
+import FilesTab from "./files";
+
 
 // Sample initial data for campaigns (unchanged)
 const initialCampaigns = [
@@ -49,7 +51,7 @@ const initialCampaigns = [
 ];
 
 const App = () => {
-  const [activeTab, setActiveTab] = useState("campaigns");
+  const [activeTab, setActiveTab] = useState("reporting");
   const [campaigns, setCampaigns] = useState(initialCampaigns);
   const [totalPoints, setTotalPoints] = useState(0);
 
@@ -88,9 +90,6 @@ const App = () => {
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
             <span
               className="font-serif text-green-700 transition-transform duration-300 inline-block hover:scale-105"
-              // Subtle Interactive Animation: Scales up slightly on hover.
-              // For a continuous pulse/glow, you would define a custom keyframe animation
-              // in your global CSS and apply a class here (e.g., 'animate-glow').
             >
               Volta
             </span>
@@ -100,7 +99,7 @@ const App = () => {
           </p>
         </header>
 
-        {/* Tab Navigation (Green Theme - unchanged) */}
+        {/* Tab Navigation */}
         <div className="flex border-b border-gray-200 bg-white">
         <button
             onClick={() => setActiveTab("reporting")}
@@ -112,6 +111,7 @@ const App = () => {
           >
             Reporting
           </button>
+
           <button
             onClick={() => setActiveTab("campaigns")}
             className={`flex-1 py-4 text-center text-base sm:text-xl font-bold transition-all duration-300 ${
@@ -122,21 +122,35 @@ const App = () => {
           >
             <span className="hidden sm:inline">View </span>Campaigns
           </button>
+
+          <button
+            onClick={() => setActiveTab("files")}
+            className={`flex-1 py-4 text-center text-base sm:text-xl font-bold transition-all duration-300 ${
+              activeTab === "files"
+                ? "border-b-4 border-green-600 text-green-700 bg-green-50"
+                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <span className="hidden sm:inline">Supporting </span>Data
+          </button>
           
         </div>
 
-        {/* Tab Content (unchanged) */}
-        <div className="pb-8">
+        {/* Tab Content */}
+       
           {activeTab === "campaigns" ? (
             <CampaignsTab
               campaigns={campaigns}
               totalPoints={totalPoints}
               onTaskToggle={handleTaskToggle}
             />
+          ) : <> {activeTab === "reporting" ? (
+            <ReportingTab/>
           ) : (
-            <ReportingTab />
-          )}
-        </div>
+            <FilesTab />
+          )}</>
+          }
+        
       </div>
     </div>
   );
