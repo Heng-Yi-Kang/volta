@@ -18,21 +18,29 @@ const ReportingTab = ({ onResultUpdate }) => {
         "http://127.0.0.1:8000/users/info?role=admin&report=electricity bill is high",
         formData,
         {
+          params: formData,
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true
+          withCredentials: true,
         }
       );
 
       if (response.status >= 200 && response.status < 300) {
         console.log("backend response: ", response.data);
 
-        const result = await axios.get("http://127.0.0.1:8000/agent/process", { withCredentials: true });
-        sessionStorage.setItem("result", JSON.stringify(result.data));
-        if (onResultUpdate) {
-          onResultUpdate(result.data); // Send result data to App.jsx
-        }
+       axios
+          .get("http://127.0.0.1:8000/agent/process", { withCredentials: true })
+          .then((response) => {
+            console.log("Data fetched successfully:");
+            console.log("HTTP Status:", response.status);
+            console.log("Data:", response.data);
+            onResultUpdate(response.data)
+          });
+        // sessionStorage.setItem("result", JSON.stringify(result.data));
+        // if (onResultUpdate) {
+        //   onResultUpdate(result.data); // Send result data to App.jsx
+        // }
         // axios
         //   .get("http://127.0.0.1:8000/result/get-result", { withCredentials: true })
         //
@@ -53,11 +61,9 @@ const ReportingTab = ({ onResultUpdate }) => {
       }
     } catch (error) {
       if (error.response) {
-     
         console.error("Server error:", error.response.data);
         console.error("Status:", error.response.status);
       } else if (error.request) {
-    
         console.error("No response received:", error.request);
       } else {
         console.error("Error:", error.message);
@@ -84,7 +90,6 @@ const ReportingTab = ({ onResultUpdate }) => {
             value={formData.role}
             onChange={handleChange}
           >
-            
             <option value="admin">Admin</option>
             <option value="manager">Facility Manager</option>
           </select>

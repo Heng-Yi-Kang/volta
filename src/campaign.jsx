@@ -1,6 +1,6 @@
 import React from 'react';
 
-// --- Custom Checkbox Component (Moved here for better encapsulation) ---
+
 const CustomCheckbox = ({ id, checked, onChange, label, points }) => (
   <div className="flex items-start py-2 px-3 hover:bg-gray-50 rounded-lg transition-colors duration-200">
     <input

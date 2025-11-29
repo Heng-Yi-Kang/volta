@@ -7,13 +7,13 @@ const UPLOAD_URL = 'http://localhost:8000/pdf/upload';
 const FileUpload = () => {
   const [files, setFiles] = useState([]); // Changed to an array
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState(''); // 'idle', 'uploading', 'success', 'error'
+  const [uploadStatus, setUploadStatus] = useState(''); 
 
-  // Helper function to process new files (filters PDFs and checks for duplicates)
+ 
   const processNewFiles = (newFileArray) => {
     if (!newFileArray || newFileArray.length === 0) return;
 
-    // 1. Filter for only PDF files
+ 
     const acceptedFiles = Array.from(newFileArray).filter(f => f.type === 'application/pdf');
     const rejectedCount = newFileArray.length - acceptedFiles.length;
 
@@ -22,18 +22,18 @@ const FileUpload = () => {
     }
 
     setFiles(prevFiles => {
-      // 2. Filter out duplicates based on name and size
+      
       const uniqueNewFiles = acceptedFiles.filter(newFile => 
         !prevFiles.some(existingFile => 
           existingFile.name === newFile.name && existingFile.size === newFile.size
         )
       );
-      // 3. Append unique, valid files to the existing list
+      
       return [...prevFiles, ...uniqueNewFiles];
     });
   };
 
-  // --- Drag and Drop Handlers ---
+ 
   const handleDragEnter = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -64,14 +64,14 @@ const FileUpload = () => {
     }
   }, [processNewFiles]);
 
-  // --- File Selection Handler (for traditional click) ---
+  
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       processNewFiles(e.target.files);
     }
   };
   
-  // --- Remove File Handler ---
+  
   const handleRemoveFile = (fileName) => {
     setFiles(prevFiles => prevFiles.filter(f => f.name !== fileName));
   };

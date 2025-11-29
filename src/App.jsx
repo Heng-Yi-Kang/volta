@@ -3,7 +3,6 @@ import ReportingTab from "./reporting";
 import CampaignsTab from "./campaign";
 import FilesTab from "./files";
 
-
 // Sample initial data for campaigns (unchanged)
 const initialCampaigns = [
   {
@@ -50,7 +49,6 @@ const initialCampaigns = [
   },
 ];
 
-
 const App = () => {
   const [campaigns, setCampaigns] = useState(initialCampaigns);
   const [totalPoints, setTotalPoints] = useState(0); // Start score at 0
@@ -59,16 +57,44 @@ const App = () => {
   const handleResultUpdate = (resultData) => {
     // Always set campaigns as an array
     if (Array.isArray(resultData)) {
-      setCampaigns(resultData);
+      setCampaigns(transformCampaigns(resultData));
     } else if (resultData && Array.isArray(resultData.campaigns)) {
-      setCampaigns(resultData.campaigns);
-    } else if (resultData && typeof resultData === 'object') {
-      setCampaigns([resultData]); // wrap single object in array
+      setCampaigns(transformCampaigns(resultData.campaigns));
+    } else if (resultData && typeof resultData === "object") {
+      setCampaigns(transformCampaigns([resultData])); // wrap single object in array
     } else {
       setCampaigns([]); // fallback to empty array
     }
     setTotalPoints(0); // Reset score to 0 on new campaign/task data
     console.log(campaigns);
+  };
+
+  const parseStringToBoolean = (value) => {
+    if (typeof value === "boolean") {
+      return value; // Already a boolean, return it directly
+    }
+    if (typeof value === "string") {
+      const normalizedValue = value.toLowerCase().trim();
+      return (
+        normalizedValue === "true" ||
+        normalizedValue === "t" ||
+        normalizedValue === "1" ||
+        normalizedValue === "yes"
+      );
+    }
+    return false; // All other values (null, undefined, 0, etc.) are false
+  };
+
+  const transformCampaigns = (apiData) => {
+    return apiData.map((campaign) => ({
+      ...campaign,
+      tasks: campaign.tasks.map((task) => ({
+        ...task,
+   
+        completed: parseStringToBoolean(task.completed),
+       
+      })),
+    }));
   };
 
   // Campaign Handlers (unchanged)
@@ -97,58 +123,50 @@ const App = () => {
   };
 
   return (
-    // NOTE: This code assumes the parent component (e.g., App.jsx) defines 
-// and passes the necessary props (campaigns, totalPoints, handleTaskToggle, and the Tabs).
+    <div className="w-full min-h-screen bg-gray-50">
+      {/* Inner Content Wrapper (Full Width) */}
+      <div className="w-full bg-white shadow-none overflow-hidden">
+        {/* Header (Spans Full Width) */}
+        <header
+          className="p-5 shadow-xl flex flex-col items-center justify-center border-b border-green-600"
+          // style={{ backgroundColor: "#B7E5CD" }}
+        >
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
+            <span className="font-serif text-green-700 transition-transform duration-300 inline-block hover:scale-105">
+              Volta
+            </span>
+          </h1>
+          <p className="text-base opacity-90 text-green-800 mt-1">
+            SDG 7 Action Platform: Turn Data into Deeds
+          </p>
+        </header>
 
-<div className="w-full min-h-screen bg-gray-50"> 
-  
-  {/* Inner Content Wrapper (Full Width) */}
-  <div className="w-full bg-white shadow-none overflow-hidden"> 
-    
-    {/* Header (Spans Full Width) */}
-    <header
-      className="p-5 shadow-xl flex flex-col items-center justify-center border-b border-green-600"
-      // style={{ backgroundColor: "#B7E5CD" }} 
-    >
-      <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
-        <span className="font-serif text-green-700 transition-transform duration-300 inline-block hover:scale-105">
-          Volta
-        </span>
-      </h1>
-      <p className="text-base opacity-90 text-green-800 mt-1">
-        SDG 7 Action Platform: Turn Data into Deeds
-      </p>
-    </header>
+        {/* Grid Content Layout - Full Width, 2 Columns (lg breakpoint) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2">
+          {/* 1. LEFT SECTION: Campaigns (With Vertical Divider) */}
+          <div className="lg:col-span-1 lg:border-r border-gray-300 border-b border-gray-200">
+            <CampaignsTab
+              campaigns={campaigns}
+              totalPoints={totalPoints}
+              onTaskToggle={handleTaskToggle}
+            />
+          </div>
 
-    {/* Grid Content Layout - Full Width, 2 Columns (lg breakpoint) */}
-    <div className="grid grid-cols-1 lg:grid-cols-2">
-      
-      {/* 1. LEFT SECTION: Campaigns (With Vertical Divider) */}
-      <div className="lg:col-span-1 lg:border-r border-gray-300 border-b border-gray-200">
-        <CampaignsTab
-          campaigns={campaigns} 
-          totalPoints={totalPoints}
-          onTaskToggle={handleTaskToggle}
-        />
-      </div>
-      
-      {/* 2. RIGHT SECTION CONTAINER: Stacked Reporting and Files */}
-      <div className="lg:col-span-1 p-6 space-y-6"> 
-        
-        {/* TOP RIGHT: Reporting */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-lg">
-           <ReportingTab onResultUpdate={handleResultUpdate}/>
+          {/* 2. RIGHT SECTION CONTAINER: Stacked Reporting and Files */}
+          <div className="lg:col-span-1 p-6 space-y-6">
+            {/* TOP RIGHT: Reporting */}
+            <div className="bg-white border border-gray-200 rounded-xl shadow-lg">
+              <ReportingTab onResultUpdate={handleResultUpdate} />
+            </div>
+
+            {/* BOTTOM RIGHT: Files */}
+            <div className="bg-white border border-gray-200 rounded-xl shadow-lg">
+              <FilesTab />
+            </div>
+          </div>
         </div>
-
-        {/* BOTTOM RIGHT: Files */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-lg">
-           <FilesTab />
-        </div>
-
       </div>
     </div>
-  </div>
-</div>
   );
 };
 
