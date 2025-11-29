@@ -81,78 +81,58 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-start justify-center p-4">
-      <div className="w-full max-w-4xl bg-white shadow-2xl rounded-xl overflow-hidden">
-        <header
-          className="p-5 shadow-xl flex flex-col items-center justify-center"
-          style={{ backgroundColor: "#B7E5CD" }} // Light background color as requested
-        >
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
-            <span
-              className="font-serif text-green-700 transition-transform duration-300 inline-block hover:scale-105"
-            >
-              Volta
-            </span>
-          </h1>
-          <p className="text-base opacity-90 text-green-800 mt-1">
-            SDG 7 Action Platform: Turn Data into Deeds
-          </p>
-        </header>
+    // NOTE: This code assumes the parent component (e.g., App.jsx) defines 
+// and passes the necessary props (campaigns, totalPoints, handleTaskToggle, and the Tabs).
 
-        {/* Tab Navigation */}
-        <div className="flex border-b border-gray-200 bg-white">
-        <button
-            onClick={() => setActiveTab("reporting")}
-            className={`flex-1 py-4 text-center text-base sm:text-xl font-bold transition-all duration-300 ${
-              activeTab === "reporting"
-                ? "border-b-4 border-green-600 text-green-700 bg-green-50"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            Reporting
-          </button>
+<div className="w-full min-h-screen bg-gray-50"> 
+  
+  {/* Inner Content Wrapper (Full Width) */}
+  <div className="w-full bg-white shadow-none overflow-hidden"> 
+    
+    {/* Header (Spans Full Width) */}
+    <header
+      className="p-5 shadow-xl flex flex-col items-center justify-center border-b border-green-600"
+      // style={{ backgroundColor: "#B7E5CD" }} 
+    >
+      <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
+        <span className="font-serif text-green-700 transition-transform duration-300 inline-block hover:scale-105">
+          Volta
+        </span>
+      </h1>
+      <p className="text-base opacity-90 text-green-800 mt-1">
+        SDG 7 Action Platform: Turn Data into Deeds
+      </p>
+    </header>
 
-          <button
-            onClick={() => setActiveTab("campaigns")}
-            className={`flex-1 py-4 text-center text-base sm:text-xl font-bold transition-all duration-300 ${
-              activeTab === "campaigns"
-                ? "border-b-4 border-green-600 text-green-700 bg-green-50"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <span className="hidden sm:inline">View </span>Campaigns
-          </button>
-
-          <button
-            onClick={() => setActiveTab("files")}
-            className={`flex-1 py-4 text-center text-base sm:text-xl font-bold transition-all duration-300 ${
-              activeTab === "files"
-                ? "border-b-4 border-green-600 text-green-700 bg-green-50"
-                : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-            }`}
-          >
-            <span className="hidden sm:inline">Supporting </span>Data
-          </button>
-          
+    {/* Grid Content Layout - Full Width, 2 Columns (lg breakpoint) */}
+    <div className="grid grid-cols-1 lg:grid-cols-2">
+      
+      {/* 1. LEFT SECTION: Campaigns (With Vertical Divider) */}
+      <div className="lg:col-span-1 lg:border-r border-gray-300 border-b border-gray-200">
+        <CampaignsTab
+          campaigns={campaigns} 
+          totalPoints={totalPoints}
+          onTaskToggle={handleTaskToggle}
+        />
+      </div>
+      
+      {/* 2. RIGHT SECTION CONTAINER: Stacked Reporting and Files */}
+      <div className="lg:col-span-1 p-6 space-y-6"> 
+        
+        {/* TOP RIGHT: Reporting */}
+        <div className="bg-white border border-gray-200 rounded-xl shadow-lg">
+           <ReportingTab/>
         </div>
 
-        {/* Tab Content */}
-       
-          {activeTab === "campaigns" ? (
-            <CampaignsTab
-              campaigns={campaigns}
-              totalPoints={totalPoints}
-              onTaskToggle={handleTaskToggle}
-            />
-          ) : <> {activeTab === "reporting" ? (
-            <ReportingTab/>
-          ) : (
-            <FilesTab />
-          )}</>
-          }
-        
+        {/* BOTTOM RIGHT: Files */}
+        <div className="bg-white border border-gray-200 rounded-xl shadow-lg">
+           <FilesTab />
+        </div>
+
       </div>
     </div>
+  </div>
+</div>
   );
 };
 

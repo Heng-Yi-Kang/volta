@@ -1,22 +1,43 @@
 import React, { useState, useCallback } from 'react';
 import axios from 'axios';
 
-// Define the API endpoint where the file should be sent
+// Define the API endpoint where the files should be sent
 const UPLOAD_URL = 'YOUR_API_ENDPOINT_HERE'; 
 
 const FileUpload = () => {
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]); // Changed to an array
   const [isDragging, setIsDragging] = useState(false);
   const [uploadStatus, setUploadStatus] = useState(''); // 'idle', 'uploading', 'success', 'error'
 
-  // --- Drag and Drop Handlers ---
+  // Helper function to process new files (filters PDFs and checks for duplicates)
+  const processNewFiles = (newFileArray) => {
+    if (!newFileArray || newFileArray.length === 0) return;
 
+    // 1. Filter for only PDF files
+    const acceptedFiles = Array.from(newFileArray).filter(f => f.type === 'application/pdf');
+    const rejectedCount = newFileArray.length - acceptedFiles.length;
+
+    if (rejectedCount > 0) {
+        alert(`Only PDF files are supported. ${rejectedCount} file(s) were ignored.`);
+    }
+
+    setFiles(prevFiles => {
+      // 2. Filter out duplicates based on name and size
+      const uniqueNewFiles = acceptedFiles.filter(newFile => 
+        !prevFiles.some(existingFile => 
+          existingFile.name === newFile.name && existingFile.size === newFile.size
+        )
+      );
+      // 3. Append unique, valid files to the existing list
+      return [...prevFiles, ...uniqueNewFiles];
+    });
+  };
+
+  // --- Drag and Drop Handlers ---
   const handleDragEnter = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
-      setIsDragging(true);
-    }
+    setIsDragging(true);
   }, []);
 
   const handleDragLeave = useCallback((e) => {
@@ -28,7 +49,6 @@ const FileUpload = () => {
   const handleDragOver = useCallback((e) => {
     e.preventDefault();
     e.stopPropagation();
-    // Ensure the cursor indicates a drop is allowed
     e.dataTransfer.dropEffect = 'copy';
     setIsDragging(true);
   }, []);
@@ -39,55 +59,50 @@ const FileUpload = () => {
     setIsDragging(false);
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      // Only accept the first file since it's a single-file upload component
-      setFile(e.dataTransfer.files[0]);
+      processNewFiles(e.dataTransfer.files);
       e.dataTransfer.clearData();
     }
-  }, []);
+  }, [processNewFiles]);
 
   // --- File Selection Handler (for traditional click) ---
-
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
+      processNewFiles(e.target.files);
     }
+  };
+  
+  // --- Remove File Handler ---
+  const handleRemoveFile = (fileName) => {
+    setFiles(prevFiles => prevFiles.filter(f => f.name !== fileName));
   };
 
   // --- Axios Upload Function ---
-
   const handleUpload = async () => {
-    if (!file) {
-      alert("Please select a file first.");
+    if (files.length === 0) {
+      alert("Please select at least one file first.");
       return;
     }
 
     setUploadStatus('uploading');
     
-    // Create FormData object to send the file and any other necessary data
     const formData = new FormData();
-    // 'file' is the key expected by the server
-    formData.append('file', file); 
     
-    // Example of appending other data:
-    // formData.append('userId', '12345'); 
+    // Append every selected file to the FormData object
+    files.forEach((file, index) => {
+      // Use a consistent key, e.g., 'documents[]', or just 'file' if the backend handles arrays
+      formData.append(`files[${index}]`, file); 
+    });
 
     try {
       const response = await axios.post(UPLOAD_URL, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data', // Essential for file uploads
-          // Add any required authorization tokens here
-          // 'Authorization': `Bearer ${token}`, 
+          'Content-Type': 'multipart/form-data', 
         },
-        onUploadProgress: (progressEvent) => {
-          // Optional: Display upload progress
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          console.log(`Upload Progress: ${percentCompleted}%`);
-        }
       });
 
       console.log('Upload successful:', response.data);
       setUploadStatus('success');
-      // setFile(null); // Clear file after successful upload if desired
+      // setFiles([]); // Clear files after successful upload
 
     } catch (error) {
       console.error('Upload failed:', error.response ? error.response.data : error.message);
@@ -95,30 +110,27 @@ const FileUpload = () => {
     }
   };
 
-  // --- Component Render ---
-
-  // Determine border style based on dragging state
+  // --- Component Render Styling ---
   const dropzoneClass = `
     flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg cursor-pointer
     transition-all duration-300 ease-in-out
     ${isDragging 
-      ? 'border-blue-500 bg-blue-50 shadow-lg' 
-      : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+      ? 'border-green-500 bg-green-50 shadow-lg' 
+      : 'border-gray-300 hover:border-green-400 hover:bg-gray-50'
     }
   `;
 
-  // Determine upload button style based on status
   const buttonClass = `
     w-full py-3 mt-4 text-white font-semibold rounded-lg transition-colors duration-300
-    ${file && uploadStatus !== 'uploading' 
-      ? 'bg-green-700 hover:bg-blue-700' 
+    ${files.length > 0 && uploadStatus !== 'uploading' 
+      ? 'bg-green-600 hover:bg-green-700' 
       : 'bg-gray-400 cursor-not-allowed'
     }
   `;
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white shadow-xl rounded-xl">
-      <h2 className="text-2xl font-bold mb-4 text-gray-800">Upload monthly bill</h2>
+    <div className="w-full p-6 bg-white shadow-xl rounded-xl">
+      <h2 className="text-xl font-bold mb-4 text-gray-700">Upload Supporting Data (PDF Only)</h2>
 
       {/* Dropzone Area */}
       <div 
@@ -132,14 +144,14 @@ const FileUpload = () => {
         <svg className="w-8 h-8 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 014 4.903M12 15l2-2m-2 2l-2-2m2 2V3"></path></svg>
         <p className="text-center text-sm text-gray-600">
           {isDragging ? (
-            <span className="font-bold text-blue-600">Drop the file here</span>
+            <span className="font-bold text-green-600">Drop your PDFs here</span>
           ) : (
             <>
-              <span className="font-semibold text-blue-600">Click to upload</span> or drag and drop
+              <span className="font-semibold text-green-600">Click to select</span> or drag and drop multiple files
             </>
           )}
         </p>
-        <p className="text-xs text-gray-500 mt-1">Maximum 1 file supported</p>
+        <p className="text-xs text-gray-500 mt-1 font-bold">Format: PDF files only (.pdf)</p>
 
         {/* Hidden File Input */}
         <input 
@@ -147,24 +159,29 @@ const FileUpload = () => {
           id="file-input" 
           className="hidden" 
           onChange={handleFileChange} 
-          // Adding 'accept' or 'multiple' constraints is handled here
-          // multiple={false} is the default for input type="file"
+          multiple // Allows multiple file selection
+          accept="application/pdf" // Restricts native browser dialog to PDFs
         />
       </div>
 
-      {/* File Preview and Status */}
-      {file && (
-        <div className="mt-4 p-3 border border-gray-200 rounded-lg flex justify-between items-center bg-gray-50">
-          <p className="text-sm text-gray-700 truncate">
-            Selected: <span className="font-medium">{file.name}</span>
-          </p>
-          <button 
-            onClick={() => setFile(null)} 
-            className="text-red-500 hover:text-red-700 text-sm font-medium ml-4 transition-colors"
-            aria-label="Remove file"
-          >
-            Remove
-          </button>
+      {/* File List Preview */}
+      {files.length > 0 && (
+        <div className="mt-4 space-y-2 max-h-40 overflow-y-auto border border-gray-200 p-3 rounded-lg">
+          <p className="text-sm font-semibold text-gray-700">Selected Files ({files.length}):</p>
+          {files.map((file, index) => (
+            <div key={index} className="flex justify-between items-center bg-green-50 p-2 rounded-md">
+              <p className="text-sm text-gray-800 truncate">
+                <span className="font-medium">{file.name}</span>
+              </p>
+              <button 
+                onClick={() => handleRemoveFile(file.name)} 
+                className="text-red-500 hover:text-red-700 text-xs font-medium ml-4 transition-colors"
+                aria-label={`Remove ${file.name}`}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
         </div>
       )}
 
@@ -172,7 +189,7 @@ const FileUpload = () => {
       <button 
         onClick={handleUpload}
         className={buttonClass}
-        disabled={!file || uploadStatus === 'uploading'}
+        disabled={files.length === 0 || uploadStatus === 'uploading'}
       >
         {uploadStatus === 'uploading' 
           ? 'Uploading...' 
@@ -180,7 +197,7 @@ const FileUpload = () => {
           ? 'Upload Complete! 🎉' 
           : uploadStatus === 'error' 
           ? 'Upload Failed 🙁' 
-          : 'Start Upload'
+          : `Upload ${files.length} File(s)`
         }
       </button>
 
