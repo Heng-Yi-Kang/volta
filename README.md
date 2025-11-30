@@ -96,6 +96,11 @@ Ideas for extension:
 
 
 ---
+## Links:
+- Presentation Link: [C1G2_Archilels_PresentationVid](https://youtu.be/b8_z1IdpzyE)
+- Demo Link:[C1G2_Archilles_DemoVid](https://youtu.be/1hmRXdi_SbU)
+- Canva slide: [C1G2_Canva_Slides](https://www.canva.com/design/DAG6EN9y8UU/UplYluEjtyO_7is3meJUoQ/edit?utm_content=DAG6EN9y8UU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
 
 
 ## Troubleshooting & FAQ
