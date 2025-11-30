@@ -6,6 +6,10 @@ Volta turns observations and problems about energy use into actionable "campaign
 
 ---
 
+Challenge: SDG 7 - Affordable and Clean Energy
+Group: C1G2 Team Archilles
+
+---
 ## Why Volta?
 Many organizations struggle to move from insight to action when it comes to energy efficiency. Volta closes that loop by:
 - Translating usage data and observations into prioritized campaigns.
